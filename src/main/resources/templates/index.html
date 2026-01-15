@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Management System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+        :root {
+            --primary-color: #161D6F;
+            --secondary-color: #A3E4DB;
+            --light-color: #EEF7FF;
+            --dark-color: #000000;
+        }
+
+        body {
+            font-family: "Raleway", sans-serif;
+            color: var(--dark-color);
+            background-color: var(--light-color);
+        }
+
+        .bg-dark {
+            background-color: var(--primary-color) !important;
+        }
+
+        .bg-secondary {
+            background-color: var(--secondary-color) !important;
+        }
+
+        .btn-close-white {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        .form-group {
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Pharmacy Management System</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <!-- Main Content -->
+    <div class="container my-4">
+        <h1 class="text-center mb-4">Pharmacy Management System</h1>
+        <ul class="nav nav-tabs mb-3" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="viewRecords-tab" data-bs-toggle="tab" data-bs-target="#viewRecords"
+                    type="button" role="tab" aria-controls="viewRecords" aria-selected="true">View Records</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="operations-tab" data-bs-toggle="tab" data-bs-target="#operations"
+                    type="button" role="tab" aria-controls="operations" aria-selected="false">Operations</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="mainTabsContent">
+            <div class="tab-pane fade show active" id="viewRecords" role="tabpanel" aria-labelledby="viewRecords-tab">
+                <div class="d-flex justify-content-center mb-3">
+                    <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal"
+                        data-bs-target="#prescribeDrugModal">Patient</button>
+                    <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal"
+                        data-bs-target="#viewNoXYZInsuranceModal">Insurances</button>
+                    <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal"
+                        data-bs-target="#viewPharmacistWorkingModal">Pharmacist</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#viewPrescriptionSummaryModal">Prescription Summary</button>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="operations" role="tabpanel" aria-labelledby="operations-tab">
+                <div class="d-flex justify-content-center mb-3">
+                    <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal"
+                        data-bs-target="#insertInsuranceProviderModal">Insurance Provider</button>
+                    <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal"
+                        data-bs-target="#patientOperationsModal">Patient</button>
+                    <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal"
+                        data-bs-target="#pharmacistOperationsModal">Pharmacist</button>
+                    <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal"
+                        data-bs-target="#pharmacyOperationsModal">Pharmacy</button>
+                    <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal"
+                        data-bs-target="#prescriptionOperationsModal">Prescription</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#dispensingRecordOperationsModal">Dispensing Record</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Records Modals -->
+    <div class="modal fade" id="prescribeDrugModal" tabindex="-1" aria-labelledby="prescribeDrugModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="prescribeDrugModalLabel">Patient</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Table to display prescription data -->
+                    <table class="table table-striped text-center">
+                        <thead>
+                            <tr>
+                                <th scope="col">Patient ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Address</th>
+                                <th scope="col">Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody id="prescriptionTableBody">
+                            <!-- Prescription data will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- view No XYZ Insurance -->
+    <div class="modal fade" id="viewNoXYZInsuranceModal" tabindex="-1" aria-labelledby="viewNoXYZInsuranceModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewNoXYZInsuranceModalLabel">Patients Insurance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Table to display patients without XYZ insurance -->
+                    <table class="table table-striped text-center">
+                        <thead>
+                            <tr>
+                                <th scope="col">PROVIDER ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">PHONE</th>
+                            </tr>
+                        </thead>
+                        <tbody id="noXYZInsuranceTableBody">
+                            <!-- Data will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- view Pharmacy Working -->
+    <div class="modal fade" id="viewPharmacistWorkingModal" tabindex="-1"
+        aria-labelledby="viewPharmacistWorkingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewPharmacistWorkingModalLabel">Pharmacist Records</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Table to display pharmacist working records -->
+                    <table class="table table-striped text-center">
+                        <thead>
+                            <tr>
+                                <th scope="col">PHARMACIST ID</th>
+                                <th scope="col">LICENSE INFO</th>
+                                <th scope="col">NAME</th>
+                                <th scope="col">PHONE</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pharmacistWorkingTableBody">
+                            <!-- Data will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- view Prescription Summary -->
+    <div class="modal fade" id="viewPrescriptionSummaryModal" tabindex="-1"
+        aria-labelledby="viewPrescriptionSummaryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewPrescriptionSummaryModalLabel">Prescription Summary</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Table to display prescription summaries -->
+                    <table class="table table-striped text-center">
+                        <thead>
+                            <tr>
+                                <th scope="col">PRESCRIPTION ID</th>
+                                <th scope="col">PATIENT ID</th>
+                                <th scope="col">DATE PRESCRIBED</th>
+                                <th scope="col">DOSAGE</th>
+                                <th scope="col">DRUG NAME</th>
+                                <th scope="col">INSTRUCTIONS</th>
+                                <th scope="col">QUANTITY</th>
+                            </tr>
+                        </thead>
+                        <tbody id="prescriptionSummaryTableBody">
+                            <!-- Data will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Insurance Provider Operations Modals -->
+    <div class="modal fade" id="insertInsuranceProviderModal" tabindex="-1"
+        aria-labelledby="insertInsuranceProviderModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="insertInsuranceProviderModalLabel">Insurance Provider</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Insert Insurance Provider form -->
+                    <form id="insuranceProviderForm">
+                        <div class="form-group">
+                            <label for="provider_providerId">Provider ID</label>
+                            <input type="number" class="form-control" id="provider_providerId"
+                                placeholder="Enter Provider ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="provider_name">Name</label>
+                            <input type="text" class="form-control" id="provider_name" placeholder="Enter Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="provider_phone">Phone</label>
+                            <input type="number" class="form-control" id="provider_phone" placeholder="Enter Phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="provider_operation">Operation</label>
+                            <select class="form-control" id="provider_operation">
+                                <option value="add">Add</option>
+                                <option value="update">Update</option>
+                                <option value="delete">Delete</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Patient Operation Modal -->
+    <div class="modal fade" id="patientOperationsModal" tabindex="-1" aria-labelledby="patientOperationsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="patientOperationsModalLabel">Patient Operations</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Patient form -->
+                    <form id="patientForm">
+                        <div class="form-group">
+                            <label for="patient_patientId">Patient ID</label>
+                            <input type="number" class="form-control" id="patient_patientId"
+                                placeholder="Enter Patient ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="patient_providerId">Provider ID</label>
+                            <input type="number" class="form-control" id="patient_providerId"
+                                placeholder="Enter Provider ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="patient_name">Name</label>
+                            <input type="text" class="form-control" id="patient_name" placeholder="Enter Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="patient_address">Address</label>
+                            <input type="text" class="form-control" id="patient_address" placeholder="Enter Address">
+                        </div>
+                        <div class="form-group">
+                            <label for="patient_phone">Phone</label>
+                            <input type="number" class="form-control" id="patient_phone" placeholder="Enter Phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="patient_dateOfBirth">Date of Birth</label>
+                            <input type="text" class="form-control" id="patient_dateOfBirth"
+                                placeholder="Eg. 20-02-2000">
+                        </div>
+                        <div class="form-group">
+                            <label for="patient_operation">Operation</label>
+                            <select class="form-control" id="patient_operation">
+                                <option value="add">Add</option>
+                                <option value="update">Update</option>
+                                <option value="delete">Delete</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Pharmacist Operation Modal -->
+    <div class="modal fade" id="pharmacistOperationsModal" tabindex="-1"
+        aria-labelledby="pharmacistOperationsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pharmacistOperationsModalLabel">Pharmacist Operations</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Pharmacist form -->
+                    <form id="pharmacistForm">
+                        <div class="form-group">
+                            <label for="pharmacist_pharmacistId">Pharmacist ID</label>
+                            <input type="number" class="form-control" id="pharmacist_pharmacistId"
+                                placeholder="Enter Pharmacist ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="pharmacist_name">Name</label>
+                            <input type="text" class="form-control" id="pharmacist_name" placeholder="Enter Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="pharmacist_phone">Phone</label>
+                            <input type="number" class="form-control" id="pharmacist_phone" placeholder="Enter Phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="pharmacist_licenseInfo">License Info</label>
+                            <input type="text" class="form-control" id="pharmacist_licenseInfo"
+                                placeholder="Enter License Info">
+                        </div>
+                        <div class="form-group">
+                            <label for="pharmacist_operation">Operation</label>
+                            <select class="form-control" id="pharmacist_operation">
+                                <option value="add">Add</option>
+                                <option value="update">Update</option>
+                                <option value="delete">Delete</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pharmacy Operation Modal -->
+    <div class="modal fade" id="pharmacyOperationsModal" tabindex="-1" aria-labelledby="pharmacyOperationsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pharmacyOperationsModalLabel">Pharmacy Operations</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Pharmacy form -->
+                    <form id="pharmacyForm">
+                        <div class="form-group">
+                            <label for="pharmacy_pharmacyId">Pharmacy ID</label>
+                            <input type="number" class="form-control" id="pharmacy_pharmacyId"
+                                placeholder="Enter Pharmacy ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="pharmacy_name">Name</label>
+                            <input type="text" class="form-control" id="pharmacy_name" placeholder="Enter Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="pharmacy_phone">Phone</label>
+                            <input type="text" class="form-control" id="pharmacy_phone" placeholder="Enter Phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="pharmacy_licenseInfo">License Info</label>
+                            <input type="text" class="form-control" id="pharmacy_licenseInfo"
+                                placeholder="Enter License Info">
+                        </div>
+                        <div class="form-group">
+                            <label for="pharmacy_operation">Operation</label>
+                            <select class="form-control" id="pharmacy_operation">
+                                <option value="add">Add</option>
+                                <option value="update">Update</option>
+                                <option value="delete">Delete</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Prescription Operation -->
+    <div class="modal fade" id="prescriptionOperationsModal" tabindex="-1"
+        aria-labelledby="prescriptionOperationsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="prescriptionOperationsModalLabel">Prescription Operations</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Prescription form -->
+                    <form id="prescriptionForm">
+                        <div class="form-group">
+                            <label for="prescription_prescriptionId">Prescription ID</label>
+                            <input type="number" class="form-control" id="prescription_prescriptionId"
+                                placeholder="Enter Prescription ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="prescription_patientId">Patient ID</label>
+                            <input type="number" class="form-control" id="prescription_patientId"
+                                placeholder="Enter Patient ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="prescription_datePrescribed">Date Prescribed</label>
+                            <input type="text" class="form-control" id="prescription_datePrescribed"
+                                placeholder="Enter Date Eg. 20-04-2024">
+                        </div>
+                        <div class="form-group">
+                            <label for="prescription_drugName">Drug Name</label>
+                            <input type="text" class="form-control" id="prescription_drugName"
+                                placeholder="Enter Drug Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="prescription_dosage">Dosage</label>
+                            <input type="text" class="form-control" id="prescription_dosage" placeholder="Enter Dosage">
+                        </div>
+                        <div class="form-group">
+                            <label for="prescription_quantity">Quantity</label>
+                            <input type="text" class="form-control" id="prescription_quantity"
+                                placeholder="Enter Quantity">
+                        </div>
+                        <div class="form-group">
+                            <label for="prescription_instructions">Instructions</label>
+                            <input type="text" class="form-control" id="prescription_instructions"
+                                placeholder="Enter Instructions">
+                        </div>
+                        <div class="form-group">
+                            <label for="prescription_operation">Operation</label>
+                            <select class="form-control" id="prescription_operation">
+                                <option value="add">Add</option>
+                                <option value="update">Update</option>
+                                <option value="delete">Delete</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dispensing Operation -->
+    <div class="modal fade" id="dispensingRecordOperationsModal" tabindex="-1"
+        aria-labelledby="dispensingRecordOperationsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dispensingRecordOperationsModalLabel">Dispensing Record Operations</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Dispensing Record form -->
+                    <form id="dispensingRecordForm">
+                        <div class="form-group">
+                            <label for="dispensingRecord_recordId">Record ID</label>
+                            <input type="number" class="form-control" id="dispensingRecord_recordId"
+                                placeholder="Enter Record ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="dispensingRecord_prescriptionId">Prescription ID</label>
+                            <input type="number" class="form-control" id="dispensingRecord_prescriptionId"
+                                placeholder="Enter Prescription ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="dispensingRecord_pharmacistId">Pharmacist ID</label>
+                            <input type="number" class="form-control" id="dispensingRecord_pharmacistId"
+                                placeholder="Enter Pharmacist ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="dispensingRecord_pharmacyId">Pharmacy ID</label>
+                            <input type="number" class="form-control" id="dispensingRecord_pharmacyId"
+                                placeholder="Enter Pharmacy ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="dispensingRecord_quantityDispensed">Quantity Dispensed</label>
+                            <input type="number" class="form-control" id="dispensingRecord_quantityDispensed"
+                                placeholder="Enter Quantity Dispensed">
+                        </div>
+                        <div class="form-group">
+                            <label for="dispensingRecord_dateDispensed">Date Dispensed</label>
+                            <input type="text" class="form-control" id="dispensingRecord_dateDispensed"
+                                placeholder="Enter Date Dispensed Eg. 20-04-2024">
+                        </div>
+                        <div class="form-group">
+                            <label for="dispensingRecord_price">Price</label>
+                            <input type="number" class="form-control" id="dispensingRecord_price"
+                                placeholder="Enter Price">
+                        </div>
+                        <div class="form-group">
+                            <label for="dispensingRecord_operation">Operation</label>
+                            <select class="form-control" id="dispensingRecord_operation">
+                                <option value="add">Add</option>
+                                <option value="update">Update</option>
+                                <option value="delete">Delete</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2025 Pharmacy Management System</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // display prescription data
+        function fetchPrescriptionData() {
+            fetch('http://localhost:8001/viewPrescribeDrug/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch prescription data.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const prescriptionTableBody = document.getElementById('prescriptionTableBody');
+                    prescriptionTableBody.innerHTML = ''; // Clear existing table rows
+                    data.results.forEach(prescription => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                    <td>${prescription.patientId}</td>
+                    <td>${prescription.name}</td>
+                    <td>${prescription.address}</td>
+                    <td>${prescription.phone}</td>
+                `;
+                        prescriptionTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to fetch prescription data.');
+                });
+        }
+
+        // Event listener to trigger fetchPrescriptionData when modal is shown
+        document.getElementById('prescribeDrugModal').addEventListener('show.bs.modal', fetchPrescriptionData);
+
+        // Event listener to clear data when modal is closed
+        document.getElementById('prescribeDrugModal').addEventListener('hidden.bs.modal', function () {
+            const prescriptionTableBody = document.getElementById('prescriptionTableBody');
+            prescriptionTableBody.innerHTML = ''; // Clear table body
+        });
+
+
+
+        // display patients without XYZ insurance
+        function fetchNoXYZInsurancePatients() {
+            fetch('http://localhost:8001/viewNoXYZinsurances/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch patients without XYZ insurance data.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const noXYZInsuranceTableBody = document.getElementById('noXYZInsuranceTableBody');
+                    noXYZInsuranceTableBody.innerHTML = ''; // Clear existing table rows
+                    data.results.forEach(patient => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                    <td>${patient.providerId}</td>
+                    <td>${patient.name}</td>
+                    <td>${patient.phone}</td>
+                    
+                `;
+                        noXYZInsuranceTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to fetch patients without XYZ insurance data.');
+                });
+        }
+
+        // Event listener to trigger fetchNoXYZInsurancePatients when modal is shown
+        document.getElementById('viewNoXYZInsuranceModal').addEventListener('show.bs.modal', fetchNoXYZInsurancePatients);
+
+        // Event listener to clear data when modal is closed
+        document.getElementById('viewNoXYZInsuranceModal').addEventListener('hidden.bs.modal', function () {
+            const noXYZInsuranceTableBody = document.getElementById('noXYZInsuranceTableBody');
+            noXYZInsuranceTableBody.innerHTML = ''; // Clear table body
+        });
+
+
+        // Function to fetch and display pharmacist working records
+        function fetchPharmacistWorkingRecords() {
+            fetch('http://localhost:8001/viewPharmacistWorking/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch pharmacist working records.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const pharmacistWorkingTableBody = document.getElementById('pharmacistWorkingTableBody');
+                    pharmacistWorkingTableBody.innerHTML = ''; // Clear existing table rows
+                    data.results.forEach(record => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                    <td>${record.pharmacistId}</td>
+                    <td>${record.name}</td>
+                    <td>${record.phone}</td>
+                    <td>${record.licenseInfo}</td>
+                `;
+                        pharmacistWorkingTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to fetch pharmacist working records.');
+                });
+        }
+
+        // Event listener to trigger fetchPharmacistWorkingRecords when modal is shown
+        document.getElementById('viewPharmacistWorkingModal').addEventListener('show.bs.modal', fetchPharmacistWorkingRecords);
+
+        // Event listener to clear data when modal is closed
+        document.getElementById('viewPharmacistWorkingModal').addEventListener('hidden.bs.modal', function () {
+            const pharmacistWorkingTableBody = document.getElementById('pharmacistWorkingTableBody');
+            pharmacistWorkingTableBody.innerHTML = ''; // Clear table body
+        });
+
+
+
+        // Function to fetch and display prescription summaries
+        function fetchPrescriptionSummaries() {
+            fetch('http://localhost:8001/viewPrescriptionSummary/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch prescription summaries.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const prescriptionSummaryTableBody = document.getElementById('prescriptionSummaryTableBody');
+                    prescriptionSummaryTableBody.innerHTML = ''; // Clear existing table rows
+                    data.results.forEach(summary => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                    <td>${summary.prescription_Id}</td>
+                    <td>${summary.patientId}</td>
+                    <td>${summary.datePrescribed}</td>
+                    <td>${summary.dosage}</td>
+                    <td>${summary.drugName}</td>
+                    <td>${summary.instructions}</td>
+                    <td>${summary.quantity}</td>
+                `;
+                        prescriptionSummaryTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to fetch prescription summaries.');
+                });
+        }
+
+        // Event listener to trigger fetchPrescriptionSummaries when modal is shown
+        document.getElementById('viewPrescriptionSummaryModal').addEventListener('show.bs.modal', fetchPrescriptionSummaries);
+
+        // Event listener to clear data when modal is closed
+        document.getElementById('viewPrescriptionSummaryModal').addEventListener('hidden.bs.modal', function () {
+            const prescriptionSummaryTableBody = document.getElementById('prescriptionSummaryTableBody');
+            prescriptionSummaryTableBody.innerHTML = ''; // Clear table body
+        });
+
+
+        // Insurance Provider Operation
+        document.getElementById('insuranceProviderForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const providerId = document.getElementById('provider_providerId').value;
+            const name = document.getElementById('provider_name').value;
+            const phone = document.getElementById('provider_phone').value;
+            const operation = document.getElementById('provider_operation').value;
+
+            // Validation for provider ID for deletion
+            if (operation === 'delete' && !providerId) {
+                alert('Provider ID is required for deletion.');
+                return;
+            }
+
+            fetch('http://localhost:8001/insuranceProvider/operations', {
+                method: 'POST',
+                body: JSON.stringify({
+                    providerId: providerId,
+                    name: name,
+                    phone: phone,
+                    operation: operation
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.results); // Show response in an alert
+                    document.getElementById('insuranceProviderForm').reset(); // Reset form
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to perform insurance provider operation.');
+                });
+        });
+
+
+        // Patient Oeration
+        document.getElementById('patientForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const patientId = document.getElementById('patient_patientId').value;
+            const providerId = document.getElementById('patient_providerId').value;
+            const name = document.getElementById('patient_name').value;
+            const address = document.getElementById('patient_address').value;
+            const phone = document.getElementById('patient_phone').value;
+            const dateOfBirth = document.getElementById('patient_dateOfBirth').value;
+            const operation = document.getElementById('patient_operation').value;
+
+            // Validation for patient ID for deletion
+            if (operation === 'delete' && !patientId) {
+                alert('Patient ID is required for deletion.');
+                return;
+            }
+
+            fetch('http://localhost:8001/patient/operations', {
+                method: 'POST',
+                body: JSON.stringify({
+                    patientId: patientId,
+                    providerId: providerId,
+                    name: name,
+                    address: address,
+                    phone: phone,
+                    dateOfBirth: dateOfBirth,
+                    operation: operation
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.results); // Show response in an alert
+                    document.getElementById('patientForm').reset(); // Reset form
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to perform patient operation.');
+                });
+        });
+
+
+        // Pharmacist Operation
+        document.getElementById('pharmacistForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const pharmacistId = document.getElementById('pharmacist_pharmacistId').value;
+            const name = document.getElementById('pharmacist_name').value;
+            const phone = document.getElementById('pharmacist_phone').value;
+            const licenseInfo = document.getElementById('pharmacist_licenseInfo').value;
+            const operation = document.getElementById('pharmacist_operation').value;
+
+            // Validation for pharmacist ID for deletion
+            if (operation === 'delete' && !pharmacistId) {
+                alert('Pharmacist ID is required for deletion.');
+                return;
+            }
+
+            fetch('http://localhost:8001/pharmacist/operations', {
+                method: 'POST',
+                body: JSON.stringify({
+                    pharmacistId: pharmacistId,
+                    name: name,
+                    phone: phone,
+                    licenseInfo: licenseInfo,
+                    operation: operation
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.results); // Show response in an alert
+                    document.getElementById('pharmacistForm').reset(); // Reset form
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to perform pharmacist operation.');
+                });
+        });
+
+
+        // Pharmacy Operation
+        document.getElementById('pharmacyForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const pharmacyId = document.getElementById('pharmacy_pharmacyId').value;
+            const name = document.getElementById('pharmacy_name').value;
+            const phone = document.getElementById('pharmacy_phone').value;
+            const licenseInfo = document.getElementById('pharmacy_licenseInfo').value;
+            const operation = document.getElementById('pharmacy_operation').value;
+
+            // Validation for pharmacy ID for deletion
+            if (operation === 'delete' && !pharmacyId) {
+                alert('Pharmacy ID is required for deletion.');
+                return;
+            }
+
+            fetch('http://localhost:8001/pharmacy/operations', {
+                method: 'POST',
+                body: JSON.stringify({
+                    pharmacyId: pharmacyId,
+                    name: name,
+                    phone: phone,
+                    licenseInfo: licenseInfo,
+                    operation: operation
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.results); // Show response in an alert
+                    document.getElementById('pharmacyForm').reset(); // Reset form
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to perform pharmacy operation.');
+                });
+        });
+
+
+        // Prescription Operation
+        document.getElementById('prescriptionForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const prescriptionId = document.getElementById('prescription_prescriptionId').value;
+            const patientId = document.getElementById('prescription_patientId').value;
+            const datePrescribed = document.getElementById('prescription_datePrescribed').value;
+            const drugName = document.getElementById('prescription_drugName').value;
+            const dosage = document.getElementById('prescription_dosage').value;
+            const quantity = document.getElementById('prescription_quantity').value;
+            const instructions = document.getElementById('prescription_instructions').value;
+            const operation = document.getElementById('prescription_operation').value;
+
+            // Validation for prescription ID for deletion
+            if (operation === 'delete' && !prescriptionId) {
+                alert('Prescription ID is required for deletion.');
+                return;
+            }
+
+            fetch('http://localhost:8001/prescription/operations', {
+                method: 'POST',
+                body: JSON.stringify({
+                    prescription_Id: prescriptionId,
+                    patientId: patientId,
+                    datePrescribed: datePrescribed,
+                    drugName: drugName,
+                    dosage: dosage,
+                    quantity: quantity,
+                    instructions: instructions,
+                    operation: operation
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.results); // Show response in an alert
+                    document.getElementById('prescriptionForm').reset(); // Reset form
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to perform prescription operation.');
+                });
+        });
+
+
+        // Dispancing Operation
+        document.getElementById('dispensingRecordForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const recordId = document.getElementById('dispensingRecord_recordId').value;
+            const prescriptionId = document.getElementById('dispensingRecord_prescriptionId').value;
+            const pharmacistId = document.getElementById('dispensingRecord_pharmacistId').value;
+            const pharmacyId = document.getElementById('dispensingRecord_pharmacyId').value;
+            const quantityDispensed = document.getElementById('dispensingRecord_quantityDispensed').value;
+            const dateDispensed = document.getElementById('dispensingRecord_dateDispensed').value;
+            const price = document.getElementById('dispensingRecord_price').value;
+            const operation = document.getElementById('dispensingRecord_operation').value;
+
+            // Validation for record ID for deletion
+            if (operation === 'delete' && !recordId) {
+                alert('Record ID is required for deletion.');
+                return;
+            }
+
+            fetch('http://localhost:8001/dispensingrecord/operations', {
+                method: 'POST',
+                body: JSON.stringify({
+                    record_Id: recordId,
+                    prescriptionId: prescriptionId,
+                    pharmacistId: pharmacistId,
+                    pharmacyId: pharmacyId,
+                    quantityDispensed: quantityDispensed,
+                    dateDispensed: dateDispensed,
+                    price: price,
+                    operation: operation
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.results); // Show response in an alert
+                    document.getElementById('dispensingRecordForm').reset(); // Reset form
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to perform dispensing record operation.');
+                });
+        });
+
+    </script>
+</body>
+
+</html>
